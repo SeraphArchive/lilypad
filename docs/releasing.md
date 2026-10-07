@@ -35,8 +35,9 @@ Go and module dependencies retain their respective licenses.
 
 ## Workflows
 
-`ci.yml` runs on pushes, pull requests and manual dispatch with read-only
-repository permissions. It checks source hygiene, formatting, module integrity,
+`ci.yml` runs on branch pushes, pull requests and manual dispatch with read-only repository
+permissions. Tag pushes and release publication do not trigger CI; publishing a
+Release runs only `release.yml`. CI checks source hygiene, formatting, module integrity,
 vet, race-enabled tests against PostgreSQL 16, cross-platform packages and the
 Linux amd64/arm64 Docker build. Validated ZIPs and their SHA-256 files are uploaded
 to Actions Artifacts as `lilypad-linux-and-windows`; the native Windows job uploads
