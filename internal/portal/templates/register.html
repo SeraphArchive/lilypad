@@ -1,0 +1,15 @@
+{{define "title"}}Register{{end}}
+{{define "content"}}
+<h1>Create an account</h1>
+<form method="post" action="/register" class="card form">
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+  <label>Email
+    <input type="email" name="email" required autofocus value="{{.Email}}">
+  </label>
+  <label>Password <span class="muted">(min 8 characters)</span>
+    <input type="password" name="password" required minlength="8">
+  </label>
+  <button type="submit">Register</button>
+</form>
+<p class="muted">Already registered? <a href="/login">Log in</a>.</p>
+{{end}}

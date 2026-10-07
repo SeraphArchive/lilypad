@@ -1,0 +1,11 @@
+{{define "title"}}Account{{end}}
+{{define "content"}}
+<h1>Account</h1>
+<div class="card">
+  <dl class="kv">
+    <dt>Email</dt><dd>{{.Account.Email}}</dd>
+    <dt>Email verified</dt><dd>{{if .Account.EmailVerified}}yes{{else}}<span class="error-text">no</span>{{end}}</dd>
+    <dt>Platform ID (XUID)</dt><dd><code>{{.Account.XUID}}</code></dd>
+  </dl>
+</div>
+{{end}}

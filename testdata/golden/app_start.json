@@ -1,0 +1,18 @@
+{
+  "route": "/api/app/start",
+  "note": "Synthetic, anonymized example — NOT real captured data.",
+  "request": {
+    "hdr": "",
+    "region": 0,
+    "country": "XX",
+    "language": "en"
+  },
+  "response": {
+    "code": 0,
+    "assetVersion": "0.0.0",
+    "assetHash": "",
+    "serverCommand": [],
+    "systemLock": [],
+    "lotteryShop": []
+  }
+}

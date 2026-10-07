@@ -1,0 +1,17 @@
+{{define "title"}}Account created{{end}}
+{{define "content"}}
+<h1>Account created</h1>
+<div class="card">
+  <p class="muted">Save these now — the takeover password is shown only once.</p>
+  <dl class="kv">
+    <dt>Email</dt><dd>{{.Email}}</dd>
+    <dt>Takeover code</dt><dd><code>{{.MigrationCode}}</code></dd>
+    <dt>Takeover password</dt><dd><code>{{.MigrationPassword}}</code></dd>
+  </dl>
+  {{if .VerificationRequired}}
+    <p class="flash">Check your email to verify your address before logging in.</p>
+  {{end}}
+</div>
+<p>Use the takeover code + password in the game's <em>引き継ぎ (data takeover)</em> screen to sign in.</p>
+<p><a href="/account">Go to your account &rarr;</a></p>
+{{end}}

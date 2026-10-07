@@ -1,0 +1,1029 @@
+{
+ "collection_tables": {
+  "user_accessory": {
+   "key": [
+    "_id"
+   ]
+  },
+  "user_alternation_party": {
+   "key": [
+    "_masterAlternationPartyId"
+   ]
+  },
+  "user_alternation_party_battle_status": {
+   "key": [
+    "_masterAlternationPartyId"
+   ]
+  },
+  "user_arcade_action_log": {
+   "key": [
+    "_actionLogId"
+   ]
+  },
+  "user_arcade_arts": {
+   "key": [
+    "_masterArtsId"
+   ]
+  },
+  "user_arcade_card": {
+   "key": [
+    "_cardId"
+   ]
+  },
+  "user_arcade_card_stock": {
+   "key": [
+    "_cardType"
+   ]
+  },
+  "user_arcade_card_trash": {
+   "key": [
+    "_cardType"
+   ]
+  },
+  "user_arcade_enchant": {
+   "key": [
+    "_enchantId"
+   ]
+  },
+  "user_arcade_enchant_content": {
+   "key": [
+    "_masterArcadeEnchantId"
+   ]
+  },
+  "user_arcade_ranking": {
+   "key": [
+    "_rank"
+   ]
+  },
+  "user_arcade_ranking_history": {
+   "key": [
+    "_masterArcadeRankingId"
+   ]
+  },
+  "user_arcade_ranking_rate": {
+   "key": [
+    "_masterArcadeRankingId"
+   ]
+  },
+  "user_arcade_season": {
+   "key": [
+    "_masterArcadeSeasonId"
+   ]
+  },
+  "user_arcade_stage": {
+   "key": [
+    "_masterArcadeStageId"
+   ]
+  },
+  "user_arcade_stage_arts": {
+   "key": [
+    "_stageId",
+    "_masterArtsId"
+   ]
+  },
+  "user_arcade_team": {
+   "key": [
+    "_masterTeamId"
+   ]
+  },
+  "user_arcade_trigger_stock": {
+   "key": [
+    "_triggerId"
+   ]
+  },
+  "user_arena_battle": {
+   "key": [
+    "_masterArenaBattleId"
+   ]
+  },
+  "user_arena_bonus": {
+   "key": [
+    "_masterArenaBonusId"
+   ]
+  },
+  "user_arena_challenge_battle": {
+   "key": [
+    "_masterArenaChallengeBattleId"
+   ]
+  },
+  "user_arena_tutorial_battle": {
+   "key": [
+    "_masterArenaTutorialBattleId"
+   ]
+  },
+  "user_baseball_quest": {
+   "key": [
+    "_masterBaseballQuestId"
+   ]
+  },
+  "user_baseball_title": {
+   "key": [
+    "_masterBaseballTitleId"
+   ]
+  },
+  "user_baseball_trial_mode": {
+   "key": [
+    "_masterBaseballTrialModeId"
+   ]
+  },
+  "user_battle": {
+   "key": [
+    "_masterBattleId"
+   ]
+  },
+  "user_campaign": {
+   "key": [
+    "_masterCampaignId"
+   ]
+  },
+  "user_card": {
+   "key": [
+    "_masterCardId"
+   ]
+  },
+  "user_chapter": {
+   "key": [
+    "_masterChapterId"
+   ]
+  },
+  "user_character": {
+   "key": [
+    "_masterCharacterId"
+   ]
+  },
+  "user_character_list_profile": {
+   "key": [
+    "_masterCharacterProfileId"
+   ]
+  },
+  "user_character_skill": {
+   "key": [
+    "_masterCharacterId",
+    "_masterSkillId"
+   ]
+  },
+  "user_character_slot": {
+   "key": [
+    "_deckIndex",
+    "_masterCharacterId"
+   ]
+  },
+  "user_client_gift": {
+   "key": [
+    "_giftId"
+   ]
+  },
+  "user_clock_tower": {
+   "key": [
+    "_masterClockTowerId"
+   ]
+  },
+  "user_clock_tower_battle": {
+   "key": [
+    "_masterClockTowerBattleId"
+   ]
+  },
+  "user_clock_tower_floor_group": {
+   "key": [
+    "_masterClockTowerFloorGroupId"
+   ]
+  },
+  "user_clock_tower_object": {
+   "key": [
+    "_masterClockTowerObjectId"
+   ]
+  },
+  "user_conquest_area": {
+   "key": [
+    "_masterConquestAreaId"
+   ]
+  },
+  "user_conquest_bike_part": {
+   "key": [
+    "_id"
+   ]
+  },
+  "user_conquest_feather_slot": {
+   "key": [
+    "_index"
+   ]
+  },
+  "user_conquest_mission": {
+   "key": [
+    "_masterConquestMissionId"
+   ]
+  },
+  "user_conquest_movement_history": {
+   "key": [
+    "_order"
+   ]
+  },
+  "user_currency": {
+   "key": [
+    "_id"
+   ]
+  },
+  "user_custom_deck_character_slot": {
+   "key": [
+    "_masterCustomDeckId",
+    "_masterCharacterId"
+   ]
+  },
+  "user_deck": {
+   "key": [
+    "_deckIndex"
+   ]
+  },
+  "user_dencho_theme": {
+   "key": [
+    "_masterDenchoThemeId"
+   ]
+  },
+  "user_dimension": {
+   "key": [
+    "_masterDimensionId"
+   ]
+  },
+  "user_dimension_info_status": {
+   "key": [
+    "_masterDimensionInfoId"
+   ]
+  },
+  "user_diorama_back_ground": {
+   "key": [
+    "_dioramaIndex"
+   ]
+  },
+  "user_diorama_camera": {
+   "key": [
+    "_dioramaIndex"
+   ]
+  },
+  "user_diorama_data": {
+   "key": [
+    "_dioramaIndex"
+   ]
+  },
+  "user_diorama_decoration": {
+   "key": [
+    "_dioramaIndex",
+    "_modelIndex"
+   ]
+  },
+  "user_diorama_model": {
+   "key": [
+    "_dioramaIndex",
+    "_modelIndex"
+   ]
+  },
+  "user_dish": {
+   "key": [
+    "_masterDishId"
+   ]
+  },
+  "user_double_question": {
+   "key": [
+    "_key"
+   ]
+  },
+  "user_duel_character_card": {
+   "key": [
+    "_masterDuelCharacterCardId"
+   ]
+  },
+  "user_duel_deck": {
+   "key": [
+    "_deckIndex"
+   ]
+  },
+  "user_duel_game": {
+   "key": [
+    "_masterDuelGameId"
+   ]
+  },
+  "user_encount_battle_resume": {
+   "key": [
+    "_index",
+    "_depth"
+   ]
+  },
+  "user_endless_expedition_enchant_card": {
+   "key": [
+    "_id"
+   ]
+  },
+  "user_endless_expedition_group": {
+   "key": [
+    "_endlessExpeditionGroupId"
+   ]
+  },
+  "user_equipment_preset": {
+   "key": [
+    "_index"
+   ]
+  },
+  "user_event_pick_up_recommended": {
+   "key": [
+    "_masterEventPickUpId"
+   ]
+  },
+  "user_event_score": {
+   "key": [
+    "_masterChapterId"
+   ]
+  },
+  "user_expedition_drop_item": {
+   "key": [
+    "_masterPlacementSheetId"
+   ]
+  },
+  "user_expedition_enchant": {
+   "key": [
+    "_index"
+   ]
+  },
+  "user_expedition_field": {
+   "key": [
+    "_fieldId"
+   ]
+  },
+  "user_field_enemy": {
+   "key": [
+    "_worldStateKey",
+    "_masterFieldEnemyId"
+   ]
+  },
+  "user_field_enemy_record": {
+   "key": [
+    "_masterFieldEnemyId"
+   ]
+  },
+  "user_fish": {
+   "key": [
+    "_masterFishId"
+   ]
+  },
+  "user_fishing_bait": {
+   "key": [
+    "_masterFishingBaitId"
+   ]
+  },
+  "user_fishing_rod_level": {
+   "key": [
+    "_rodLevelGroupLabel"
+   ]
+  },
+  "user_flag": {
+   "key": [
+    "_id"
+   ]
+  },
+  "user_food_material": {
+   "key": [
+    "_masterFoodMaterialId"
+   ]
+  },
+  "user_food_material_status": {
+   "key": [
+    "_masterFoodMaterialId"
+   ]
+  },
+  "user_free_product": {
+   "key": [
+    "_masterFreeProductId"
+   ]
+  },
+  "user_gallery_photo": {
+   "key": [
+    "_galleryPhotoMasterId"
+   ]
+  },
+  "user_gallery_sound": {
+   "key": [
+    "_gallerySoundMasterId"
+   ]
+  },
+  "user_gamelib_product": {
+   "key": [
+    "_masterProductId"
+   ]
+  },
+  "user_garden_drop_item": {
+   "key": [
+    "_masterGardenDropItemId"
+   ]
+  },
+  "user_garden_expedition": {
+   "key": [
+    "_gardenExpeditionId"
+   ]
+  },
+  "user_gate_boss": {
+   "key": [
+    "_masterGateBossId"
+   ]
+  },
+  "user_gate_boss_battle": {
+   "key": [
+    "_masterGateBossBattleId"
+   ]
+  },
+  "user_home_background": {
+   "key": [
+    "_masterHomeBackgroundId"
+   ]
+  },
+  "user_home_banner": {
+   "key": [
+    "_masterHomeBannerId"
+   ]
+  },
+  "user_home_bgm": {
+   "key": [
+    "_masterHomeBgmId"
+   ]
+  },
+  "user_home_novel": {
+   "key": [
+    "_masterHomeNovelId"
+   ]
+  },
+  "user_home_popup": {
+   "key": [
+    "_masterHomePopupId"
+   ]
+  },
+  "user_invite_code": {
+   "key": [
+    "_masterInviteId"
+   ]
+  },
+  "user_invite_sender_reward": {
+   "key": [
+    "_masterInviteConditionId"
+   ]
+  },
+  "user_item": {
+   "key": [
+    "_id"
+   ]
+  },
+  "user_item_lottery": {
+   "key": [
+    "_masterItemLotteryId"
+   ]
+  },
+  "user_item_lottery_result": {
+   "key": [
+    "_index"
+   ]
+  },
+  "user_item_lottery_reward": {
+   "key": [
+    "_masterItemLotteryRewardId"
+   ]
+  },
+  "user_key_binding": {
+   "key": [
+    "_bindingId"
+   ]
+  },
+  "user_latent_ability": {
+   "key": [
+    "_masterCharacterId",
+    "_masterLatentAbilityId"
+   ]
+  },
+  "user_latest_story": {
+   "key": [
+    "_chapter"
+   ]
+  },
+  "user_limited_exchange_shop": {
+   "key": [
+    "_masterLimitedExchangeShopId"
+   ]
+  },
+  "user_live": {
+   "key": [
+    "_masterLiveId"
+   ]
+  },
+  "user_live_high_score_reward": {
+   "key": [
+    "_masterLiveHighScoreRewardId"
+   ]
+  },
+  "user_live_music": {
+   "key": [
+    "_masterLiveMusicId"
+   ]
+  },
+  "user_live_music_level": {
+   "key": [
+    "_masterLiveMusicLevelId"
+   ]
+  },
+  "user_live_ranking": {
+   "key": [
+    "_rank"
+   ]
+  },
+  "user_live_ranking_history": {
+   "key": [
+    "_masterLiveRankingId"
+   ]
+  },
+  "user_live_ranking_rate": {
+   "key": [
+    "_masterLiveRankingId"
+   ]
+  },
+  "user_login_bonus": {
+   "key": [
+    "_masterLoginId"
+   ]
+  },
+  "user_login_bonus_lottery": {
+   "key": [
+    "_masterLoginBonusLotteryId"
+   ]
+  },
+  "user_loop_mission": {
+   "key": [
+    "_masterMissionId"
+   ]
+  },
+  "user_lottery": {
+   "key": [
+    "_masterLotteryId"
+   ]
+  },
+  "user_lottery_encore": {
+   "key": [
+    "_masterLotteryShopId",
+    "_drawDay"
+   ]
+  },
+  "user_lottery_gauge": {
+   "key": [
+    "_masterLotteryGaugeId"
+   ]
+  },
+  "user_lottery_result": {
+   "key": [
+    "_index"
+   ]
+  },
+  "user_lottery_reward_select": {
+   "key": [
+    "_masterLotteryShopId",
+    "_index"
+   ]
+  },
+  "user_lottery_shop": {
+   "key": [
+    "_masterLotteryShopId"
+   ]
+  },
+  "user_lua_battle": {
+   "key": [
+    "_masterLuaBattleId"
+   ]
+  },
+  "user_lua_reward": {
+   "key": [
+    "_masterLuaRewardId"
+   ]
+  },
+  "user_memory_story": {
+   "key": [
+    "_masterMemoryStoryId"
+   ]
+  },
+  "user_mission": {
+   "key": [
+    "_masterMissionId"
+   ]
+  },
+  "user_mission_bingo_group": {
+   "key": [
+    "_masterMissionBingoGroupId"
+   ]
+  },
+  "user_mob_hunt": {
+   "key": [
+    "_masterMobHuntId"
+   ]
+  },
+  "user_mob_quest": {
+   "key": [
+    "_masterQuestId",
+    "_masterTimeboxId"
+   ]
+  },
+  "user_noise_character": {
+   "key": [
+    "_characterLabel"
+   ]
+  },
+  "user_novel_aleady_read": {
+   "key": [
+    "_key"
+   ]
+  },
+  "user_octopus_hunting": {
+   "key": [
+    "_masterOctopusHuntingId"
+   ]
+  },
+  "user_octopus_hunting_ranking_history": {
+   "key": [
+    "_masterOctopusHuntingRankingId"
+   ]
+  },
+  "user_octopus_hunting_ranking_rate": {
+   "key": [
+    "_masterOctopusHuntingId"
+   ]
+  },
+  "user_octopus_hunting_ranking_rate_second": {
+   "key": [
+    "_masterOctopusHuntingRankingId"
+   ]
+  },
+  "user_other_arcade_result": {
+   "key": [
+    "_encryptedUserId"
+   ]
+  },
+  "user_other_profile": {
+   "key": [
+    "_encryptedUserId"
+   ]
+  },
+  "user_patrol": {
+   "key": [
+    "_masterPatrolId"
+   ]
+  },
+  "user_placement_sheet": {
+   "key": [
+    "_masterPlacementSheetId"
+   ]
+  },
+  "user_player_rank_reward": {
+   "key": [
+    "_masterPlayerRankRewardId"
+   ]
+  },
+  "user_prism_battle": {
+   "key": [
+    "_objectName"
+   ]
+  },
+  "user_quest": {
+   "key": [
+    "_masterQuestId"
+   ]
+  },
+  "user_question": {
+   "key": [
+    "_key"
+   ]
+  },
+  "user_random": {
+   "key": [
+    "_lotteryType"
+   ]
+  },
+  "user_random_seed": {
+   "key": [
+    "_id"
+   ]
+  },
+  "user_recollection_piece": {
+   "key": [
+    "_masterRecollectionPieceId"
+   ]
+  },
+  "user_recollection_story": {
+   "key": [
+    "_masterRecollectionStoryId"
+   ]
+  },
+  "user_record": {
+   "key": [
+    "_type"
+   ]
+  },
+  "user_restricted_character": {
+   "key": [
+    "_masterRestrictedCharacterId"
+   ]
+  },
+  "user_resume": {
+   "key": [
+    "_index"
+   ]
+  },
+  "user_reward_group": {
+   "key": [
+    "_masterRewardGroupLabel"
+   ]
+  },
+  "user_reward_group_log": {
+   "key": [
+    "_logId"
+   ]
+  },
+  "user_score_attack": {
+   "key": [
+    "_masterScoreAttackId"
+   ]
+  },
+  "user_score_attack_event": {
+   "key": [
+    "_masterEventId"
+   ]
+  },
+  "user_score_attack_ex": {
+   "key": [
+    "_masterScoreAttackExId"
+   ]
+  },
+  "user_score_attack_mission_reward": {
+   "key": [
+    "_masterScoreAttackMissionRewardId"
+   ]
+  },
+  "user_secret_boss": {
+   "key": [
+    "_masterSecretBossId"
+   ]
+  },
+  "user_select_ticket_lottery": {
+   "key": [
+    "_masterSelectTicketLotteryId"
+   ]
+  },
+  "user_select_ticket_lottery_result": {
+   "key": [
+    "_index"
+   ]
+  },
+  "user_seraph_booster": {
+   "key": [
+    "_id"
+   ]
+  },
+  "user_seraph_sphere": {
+   "key": [
+    "_id"
+   ]
+  },
+  "user_serial_code": {
+   "key": [
+    "_masterSerialCodeId"
+   ]
+  },
+  "user_server_gift": {
+   "key": [
+    "_giftId"
+   ]
+  },
+  "user_shop": {
+   "key": [
+    "_id"
+   ]
+  },
+  "user_shop_item": {
+   "key": [
+    "_id"
+   ]
+  },
+  "user_side_event": {
+   "key": [
+    "_masterEventId"
+   ]
+  },
+  "user_side_event_score": {
+   "key": [
+    "_masterSideEventId"
+   ]
+  },
+  "user_six_sense_add_count": {
+   "key": [
+    "_key"
+   ]
+  },
+  "user_skill": {
+   "key": [
+    "_masterSkillId"
+   ]
+  },
+  "user_slot": {
+   "key": [
+    "_deckIndex",
+    "_slotIndex"
+   ]
+  },
+  "user_sort_filter": {
+   "key": [
+    "_type"
+   ]
+  },
+  "user_sort_filter_second": {
+   "key": [
+    "_type"
+   ]
+  },
+  "user_stockable_regular_reward": {
+   "key": [
+    "_masterStockableRegularRewardId"
+   ]
+  },
+  "user_story": {
+   "key": [
+    "_masterStoryId"
+   ]
+  },
+  "user_story_cooking_history": {
+   "key": [
+    "_masterStoryId",
+    "_masterDishId"
+   ]
+  },
+  "user_story_hard_mode": {
+   "key": [
+    "_masterStoryHardModeId"
+   ]
+  },
+  "user_story_hard_mode_ex": {
+   "key": [
+    "_masterStoryHardModeExScheduleId"
+   ]
+  },
+  "user_story_hard_mode_ex_history": {
+   "key": [
+    "_masterStoryHardModeExId"
+   ]
+  },
+  "user_story_item": {
+   "key": [
+    "_masterStoryId",
+    "_masterItemId"
+   ]
+  },
+  "user_story_item_demand": {
+   "key": [
+    "_masterItemDemandId"
+   ]
+  },
+  "user_story_item_record": {
+   "key": [
+    "_masterTimeboxId",
+    "_masterItemId"
+   ]
+  },
+  "user_story_level_limit": {
+   "key": [
+    "_masterStoryLimitLevelId"
+   ]
+  },
+  "user_story_live_result": {
+   "key": [
+    "_masterStoryLiveId"
+   ]
+  },
+  "user_story_street_store": {
+   "key": [
+    "_masterStoryId"
+   ]
+  },
+  "user_subscription": {
+   "key": [
+    "_subscriptionLabel"
+   ]
+  },
+  "user_subscription_second": {
+   "key": [
+    "_subscriptionLabel"
+   ]
+  },
+  "user_term_stock_item": {
+   "key": [
+    "_uid"
+   ]
+  },
+  "user_timebox": {
+   "key": [
+    "_masterTimeboxId"
+   ]
+  },
+  "user_title_badge": {
+   "key": [
+    "_masterTitleBadgeId"
+   ]
+  },
+  "user_trained_baseball_player": {
+   "key": [
+    "_index"
+   ]
+  },
+  "user_upload_image": {
+   "key": [
+    "_type"
+   ]
+  },
+  "user_variable_challenge_battle": {
+   "key": [
+    "_masterVariableChallengeBattleId"
+   ]
+  },
+  "user_wave_battle": {
+   "key": [
+    "_masterWaveBattleId"
+   ]
+  },
+  "user_wave_battle_ranking_history": {
+   "key": [
+    "_masterWaveBattleRankingId"
+   ]
+  },
+  "user_wave_battle_ranking_rate": {
+   "key": [
+    "_masterWaveBattleRankingId"
+   ]
+  },
+  "user_web_shop_product": {
+   "key": [
+    "_masterGamelibProductId"
+   ]
+  },
+  "user_world_state": {
+   "key": [
+    "_index",
+    "_depth"
+   ]
+  }
+ },
+ "singleton_tables": [
+  "user_accessory_synthesis_auto_select_setting",
+  "user_arcade_battle_status",
+  "user_arcade_party_status",
+  "user_arcade_setting",
+  "user_arcade_status",
+  "user_arcade_team_status",
+  "user_arena_training_record",
+  "user_arena_training_setting",
+  "user_auto_equipment_setting",
+  "user_auto_training",
+  "user_auto_training_setting",
+  "user_auto_variable_challenge_status",
+  "user_baseball_quest_resume",
+  "user_battle_auto_setting",
+  "user_battle_setting",
+  "user_battle_status",
+  "user_camera_setting",
+  "user_clock_tower_level",
+  "user_common",
+  "user_conquest_bike",
+  "user_conquest_common",
+  "user_current_baseball_player",
+  "user_current_conquest",
+  "user_current_endless_expedition",
+  "user_current_expedition",
+  "user_duel",
+  "user_endless_expedition_fork_event",
+  "user_field_setting",
+  "user_garden_level",
+  "user_home_setting",
+  "user_latest_conquest",
+  "user_life",
+  "user_live_option",
+  "user_live_rate",
+  "user_lottery_ability_effect_setting",
+  "user_novel_setting",
+  "user_octopus_hunting_ranking",
+  "user_other_wave_battle_result",
+  "user_party",
+  "user_profile",
+  "user_self_arcade_result",
+  "user_self_octopus_hunting_result",
+  "user_self_wave_battle_result",
+  "user_six_sense",
+  "user_spirit",
+  "user_stock_system",
+  "user_story_hard_mode_ex_status",
+  "user_ui_setting",
+  "user_ui_setting_second",
+  "user_variable_challenge_setting",
+  "user_variable_challenge_setting_second",
+  "user_version",
+  "user_wave_battle_battle_status",
+  "user_wave_battle_ranking",
+  "user_wave_battle_status",
+  "user_weakening_retry"
+ ]
+}

@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: lilypad
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in the environment or .env}
+      POSTGRES_DB: lilypad
+    volumes:
+      - lilypad_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lilypad"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  lilypad:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Migrations run on boot; override any config.yaml value via env.
+      LILYPAD_LISTEN: ":8443"
+      LILYPAD_DB_DSN: "postgres://lilypad@postgres:5432/lilypad?sslmode=disable"
+      PGPASSWORD: "${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}"
+      LILYPAD_DATA_DIR: "${LILYPAD_DATA_DIR:+/data}"
+    ports:
+      - "8443:8443"
+    volumes:
+      # Mount your config and (read-only) master data + signing key.
+      - ./config.yaml:/app/config.yaml:ro
+      - ${LILYPAD_DATA_DIR:-./_data}:/data:ro
+      - ${LILYPAD_SECRETS_DIR:-./_secrets}:/secrets:ro
+
+volumes:
+  lilypad_pgdata:

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{block "title" .}}LilyPad{{end}} · LilyPad Portal</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">LilyPad</div>
+      <nav>
+        {{if .Authed}}
+          <a href="/account" class="{{if eq .Nav "account"}}active{{end}}">Account</a>
+          <a href="/takeover" class="{{if eq .Nav "takeover"}}active{{end}}">Takeover Code</a>
+          {{if .TransferEnabled}}<a href="/transfer" class="{{if eq .Nav "transfer"}}active{{end}}">Save Data</a>{{end}}
+          <!-- reserved for future functions (gifts, support, admin) -->
+          <form method="post" action="/logout" class="logout-form">
+            <input type="hidden" name="csrf" value="{{.CSRF}}">
+            <button type="submit" class="link-btn">Log out</button>
+          </form>
+        {{else}}
+          <a href="/login" class="{{if eq .Nav "login"}}active{{end}}">Log in</a>
+          <a href="/register" class="{{if eq .Nav "register"}}active{{end}}">Register</a>
+        {{end}}
+      </nav>
+      <div class="sidebar-foot">private server</div>
+    </aside>
+    <main class="content">
+      {{if .Flash}}<div class="flash">{{.Flash}}</div>{{end}}
+      {{if .Error}}<div class="flash error">{{.Error}}</div>{{end}}
+      {{block "content" .}}{{end}}
+    </main>
+  </div>
+</body>
+</html>

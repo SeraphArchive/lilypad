@@ -1,0 +1,48 @@
+{{define "title"}}Save Data{{end}}
+{{define "content"}}
+<h1>Save Data</h1>
+
+<div class="card">
+  <h2>Current save</h2>
+  {{if .Save.HasSave}}
+  <dl class="kv">
+    <dt>Player</dt><dd>{{.Save.UserName}}{{if .Save.Rank}} (rank {{.Save.Rank}}){{end}}</dd>
+    <dt>Asset version</dt><dd>{{.Save.BundleVersion}}</dd>
+    <dt>Tables</dt><dd>{{.Save.Tables}}</dd>
+    <dt>Rows</dt><dd>{{.Save.Rows}}</dd>
+    <dt>Quartz</dt><dd>{{.Save.GemFree}} free + {{.Save.GemPaid}} paid</dd>
+  </dl>
+  {{else}}
+  <p>No save data yet — log in with the game client once, or import an archive below.</p>
+  {{end}}
+</div>
+
+<div class="card">
+  <h2>Export</h2>
+  <p>Download the full save as a <code>lilypad-export/1</code> JSON archive
+     (all user tables, plus the quartz balance). Keep it safe — it is the
+     complete account state.</p>
+  {{if .Save.HasSave}}
+  <p><a href="/transfer/export" class="btn" download>Download archive</a></p>
+  {{else}}
+  <p class="muted">Nothing to export yet.</p>
+  {{end}}
+</div>
+
+<div class="card">
+  <h2>Import</h2>
+  <p>Upload a compatible <code>lilypad-export/1</code> save archive.</p>
+  <p class="error-text"><strong>This overwrites your current save</strong>
+     and kicks any live game client (it will see the official
+     “logged in on another device” 401 and must re-login to pull the new
+     state). Tables in the archive replace the stored ones; the quartz
+     balance is imported only when the box below is checked.</p>
+  <form method="post" action="/transfer/import" enctype="multipart/form-data">
+    <input type="hidden" name="csrf" value="{{.CSRF}}">
+    <p><input type="file" name="archive" accept=".json,application/json" required></p>
+    <p><label><input type="checkbox" name="with_gems" checked>
+       Also import the quartz balance (free + paid)</label></p>
+    <p><button type="submit">Import and overwrite</button></p>
+  </form>
+</div>
+{{end}}

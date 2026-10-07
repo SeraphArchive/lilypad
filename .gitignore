@@ -1,0 +1,83 @@
+# --- Build artifacts ---
+/lilypad
+/portal
+/fixtool
+/keygen
+/seedgen
+*.exe
+*.out
+*.test
+/bin/
+/dist/
+
+# --- Secrets, keys, local config (NEVER commit) ---
+*.pem
+*.key
+*.pfx
+*.p12
+.env
+.env.*
+config.yaml
+config.local.yaml
+config.*.local.yaml
+/config.*.yaml
+/deploy/config.*.yaml
+!config.example.yaml
+/secrets/
+/deploy/_secrets/
+/deploy/_data/
+/_external/
+
+# --- Real captured data / external inputs (NEVER commit) ---
+# The repo is self-contained and data-free: real master data, full network
+# captures, and game binaries live outside the repo and are read via config.
+*.jsonl
+/data/
+/master-data/
+/pgdata/
+/fixtures/
+/testdata/capture/
+*.idb
+*.i64
+*.dll
+*.dmp
+*.log
+*.pcap
+*.pcapng
+*.har
+*.sql.gz
+*.dump
+/backups/
+/exports/
+/captures/
+/logs/
+/tmp/
+/.tmp/
+/.superpowers/
+/.claude/
+/.codex/
+/.agents/
+/.vs/
+*.bak
+*.bk
+*.orig
+*.suo
+*.user
+__pycache__/
+*.pyc
+
+# --- Anonymized goldens ARE committed (kept as .json, not .jsonl) ---
+!/testdata/golden/
+!/testdata/golden/**
+
+# --- Go / tooling ---
+/vendor/
+coverage.out
+coverage.html
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

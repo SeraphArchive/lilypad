@@ -1,0 +1,52 @@
+# Copy to config.local.yaml and set db.dsn.
+listen: ":8443"
+
+tls:
+  enabled: false
+  cert: ""
+  key: ""
+
+db:
+  dsn: "postgres://lilypad:CHANGE_ME@localhost:5432/lilypad?sslmode=disable"
+
+# Empty disables master-driven economy operations.
+data_dir: ""
+fixtures: ""
+
+signing:
+  mode: "noop" # noop | rsa
+  private_key_pem: ""
+
+portal:
+  base_url: "http://localhost:8443"
+  require_email_verification: false
+  country_code: "CN"
+  currency_code: "CNY"
+  smtp:
+    host: ""
+    port: 0
+    user: ""
+    pass: ""
+    from: ""
+
+asset:
+  version: "0.0.0"
+  hash: ""
+
+gem:
+  validate_cost: true
+
+constants:
+  systemLock: []
+  # Permanent shop IDs; eligibility and ticket expiry still apply. See docs/lottery-shops.md.
+  lotteryShop: [
+    65000013, 65000016, 65000151, 65000494, 65000671, 65000672, 65001005,
+    65000711, 65000712, 65000713, 65000714, 65000715, 65001531, 65001532, 65001535,
+    65000664, 65000683, 65000724, 65000754, 65000843, 65000865, 65000888, 65000899,
+    65000923, 65000934, 65000946, 65000947, 65000967, 65000975, 65001006, 65001015,
+    65001024, 65001043, 65001054, 65001096, 65001149, 65001156, 65001165, 65001186,
+    65001205, 65001227, 65001235, 65001243, 65001285, 65001296, 65001297, 65001303,
+    65001325, 65001335, 65001360, 65001469, 65001473, 65001483,
+    65001502, 65001526, 65001527, 65800011
+  ]
+  web_shop_products: []

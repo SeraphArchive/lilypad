@@ -1,0 +1,2 @@
+listen: ":8443"
+db: { dsn: "postgres://file" }

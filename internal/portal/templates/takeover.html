@@ -1,0 +1,24 @@
+{{define "title"}}Takeover Code{{end}}
+{{define "content"}}
+<h1>Takeover (引き継ぎ) code</h1>
+<div class="card">
+  <p>Enter this code in the game's data-takeover screen to sign in on any device.</p>
+  <dl class="kv">
+    <dt>Takeover code</dt><dd><code>{{.Account.MigrationCode}}</code></dd>
+    {{if .MigrationPassword}}
+    <dt>Takeover password</dt><dd><code>{{.MigrationPassword}}</code></dd>
+    {{end}}
+  </dl>
+  {{if .MigrationPassword}}
+  <p class="muted">Save the new password now. It will not be shown again.</p>
+  {{end}}
+</div>
+<div class="card">
+  <p>Reset takeover password</p>
+  <p class="muted">The previous password stops working immediately. The new one is shown once on this page.</p>
+  <form method="post" action="/takeover/reset" class="form">
+    <input type="hidden" name="csrf" value="{{.CSRF}}">
+    <button type="submit" onclick="return confirm('Reset takeover password? The old one will stop working immediately.')">Reset takeover password</button>
+  </form>
+</div>
+{{end}}

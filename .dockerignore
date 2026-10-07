@@ -1,0 +1,16 @@
+# Allow only server build inputs into the Docker context.
+**
+!go.mod
+!go.sum
+!LICENSE
+!cmd/
+!cmd/**
+!internal/
+!internal/**
+!deploy/
+!deploy/Dockerfile
+**/*_test.go
+**/testdata/**
+**/*.pem
+**/*.key
+**/*.jsonl
