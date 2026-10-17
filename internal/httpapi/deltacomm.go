@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"time"
 
 	"lilypad/internal/deltacomm"
 	"lilypad/internal/store"
@@ -162,6 +163,14 @@ func (s *Server) handleConfirm(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+	// Confirm is what the client compares its cached copy against, and it only
+	// pulls a table whose token differs. Close the undated gifts before the
+	// tokens are read, so a gift that changes takes a new token and gets pulled.
+	if _, err := s.closeUndatedGifts(r.Context(), userID); err != nil {
+		s.log.Error("confirm close undated gifts", "err", err)
+		s.fail(w, r, 1, "confirm failed")
+		return
+	}
 	hashes, err := s.store.AllHashes(r.Context(), userID)
 	if err != nil {
 		s.log.Error("confirm", "err", err)
@@ -174,6 +183,43 @@ func (s *Server) handleConfirm(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	s.respond(w, r, s.envelope(map[string]any{"hashes": emptyMapAsArray(hashes)}))
+}
+
+// giftLifetime is how long the client keeps a gift open. GiftUtils.thirtyDaysSeconds
+// is 2592000, and both the box list and the client's own gift creation measure a
+// gift's life from its registration date by exactly that.
+const giftLifetime = int64(2592000)
+
+// giftTables are the two inboxes the menu badge sums. Both use the same rule: an
+// unreceived gift with no expiry counts forever, while the box hides a gift once
+// now passes its registration date plus giftLifetime.
+var giftTables = []string{"user_server_gift", "user_client_gift"}
+
+// closeUndatedGifts persists the expiry the gift box already assumes for a gift
+// that has neither a registration date nor an expiry. The badge counts such a row
+// as unclaimed forever and the box never shows it, so the two disagree. Stamping
+// the expiry changes the saved rows, which moves the table version the client
+// compares on its next login and makes it pull the corrected copy. Dated gifts
+// and anything already received are skipped, and a table with nothing to close is
+// left unwritten so its version stays put.
+func (s *Server) closeUndatedGifts(ctx context.Context, userID int64) (map[string][]deltacomm.Row, error) {
+	now := time.Now().Unix()
+	var closed map[string][]deltacomm.Row
+	_, err := s.store.MutateUnderLock(ctx, userID, giftTables, func(cur map[string][]deltacomm.Row) (deltacomm.Deltas, error) {
+		puts := map[string][]deltacomm.Row{}
+		for _, name := range giftTables {
+			for _, g := range cur[name] {
+				if asBool(g["_isReceived"]) || asInt(g["_registeredAt"]) > 0 || asInt(g["_expiredAt"]) > 0 {
+					continue
+				}
+				g["_expiredAt"] = now - giftLifetime
+				puts[name] = append(puts[name], g)
+			}
+		}
+		closed = puts
+		return deltacomm.Deltas{PutItems: puts}, nil
+	})
+	return closed, err
 }
 
 func (s *Server) handlePull(w http.ResponseWriter, r *http.Request) {

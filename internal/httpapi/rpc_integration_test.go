@@ -320,6 +320,85 @@ func TestGiftReceiveGrantsItemAndMarksReceived(t *testing.T) {
 	}
 }
 
+// unclaimedGiftCount is what the client's badge shows. NotReceivedCount counts an
+// unreceived gift whenever its _expiredAt is zero or still ahead, and the menu
+// badge prints that sum for both gift tables. The gift box does not: its list
+// drops every gift IsExpired() reports, and IsExpired() is now past
+// _registeredAt plus 30 days. A row with both timestamps at zero is therefore
+// counted and never shown, which is the phantom "30 gifts" badge.
+func unclaimedGiftCount(rows []any, now int64) int {
+	n := 0
+	for _, g := range rows {
+		m := g.(map[string]any)
+		if m["_isReceived"] == true {
+			continue
+		}
+		exp := asInt(m["_expiredAt"])
+		if exp <= 0 || exp > now {
+			n++
+		}
+	}
+	return n
+}
+
+// TestUndatedGiftDoesNotCountAsUnclaimed pins the phantom badge. A gift whose
+// registration and expiry are both zero can never be opened: the box hides it as
+// expired, but the badge counts a zero expiry as unclaimed forever. Such a row is
+// not a gift the client created (that path stamps all three timestamps), so a
+// pull must not hand it back as an unclaimed gift.
+func TestUndatedGiftDoesNotCountAsUnclaimed(t *testing.T) {
+	s, pg, xuid, uid := newIntegrityServer(t)
+	now := time.Now().Unix()
+	if _, err := pg.ApplyDeltas(context.Background(), uid, deltacomm.Deltas{PutItems: map[string][]deltacomm.Row{
+		"user_server_gift": {
+			{"_giftId": 1, "_rewardCategory": 1, "_itemId": 700, "_itemNum": 100, "_isReceived": false, "_registeredAt": 0, "_startAt": 0, "_expiredAt": 0},
+			{"_giftId": 2, "_rewardCategory": 1, "_itemId": 700, "_itemNum": 100, "_isReceived": false, "_registeredAt": now, "_startAt": now, "_expiredAt": now + 30*86400},
+		},
+		"user_client_gift": {
+			{"_giftId": 3, "_masterRewardId": 600, "_isReceived": false, "_registeredAt": 0, "_startAt": 0, "_expiredAt": 0},
+		},
+	}}, nil); err != nil {
+		t.Fatal(err)
+	}
+	// The client compares tokens at confirm and only pulls a table whose token
+	// moved, so the closure has to land there. Pulling alone never re-reads it.
+	post(t, s, "/api/user/confirm", xuid, map[string]any{"hdr": ""})
+	pull := post(t, s, "/api/user/pull", xuid, map[string]any{"hdr": "", "tables": []any{"user_server_gift", "user_client_gift"}})
+	tables := pull["tables"].(map[string]any)
+	got := unclaimedGiftCount(tables["user_server_gift"].([]any), now) + unclaimedGiftCount(tables["user_client_gift"].([]any), now)
+	if got != 1 {
+		t.Fatalf("unclaimed gifts the client would badge: got %d, want 1 (only the dated gift)", got)
+	}
+	// The client re-reads a table only when its saved version changes, so the
+	// closure has to be stored, not just reported. A second pull must stay clean
+	// and must not rewrite a table that no longer needs it.
+	stored, err := pg.GetTables(context.Background(), uid, []string{"user_server_gift", "user_client_gift"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"user_server_gift", "user_client_gift"} {
+		for _, g := range stored[name] {
+			if asInt(g["_registeredAt"]) == 0 && asInt(g["_expiredAt"]) <= 0 {
+				t.Fatalf("%s gift %v still has no expiry in the save", name, g["_giftId"])
+			}
+		}
+	}
+	before, err := pg.AllHashes(context.Background(), uid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	post(t, s, "/api/user/confirm", xuid, map[string]any{"hdr": ""})
+	after, err := pg.AllHashes(context.Background(), uid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for name, hash := range before {
+		if after[name] != hash {
+			t.Fatalf("second pull rewrote %s (%s -> %s); a closed gift must stay closed", name, hash, after[name])
+		}
+	}
+}
+
 func TestGiftReceiveGrantsSeededQuartz(t *testing.T) {
 	s, pg, xuid, userID := newIntegrityServer(t)
 	if _, err := pg.ApplyDeltas(context.Background(), userID, deltacomm.Deltas{PutItems: map[string][]deltacomm.Row{
