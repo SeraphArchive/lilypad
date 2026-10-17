@@ -94,6 +94,8 @@ func (s *Server) handleLoopMissionReceive(w http.ResponseWriter, r *http.Request
 			itemDelta := map[int64]int64{}
 			profileDelta := map[string]int64{}
 			var loopRows []deltacomm.Row
+			var credits []gem.Credit
+			creditPositions := map[int64]int{}
 			positions := map[int64]int{}
 			for _, m := range req.ReceiveMissions {
 				prev := existing[m.MasterMissionID]
@@ -141,8 +143,17 @@ func (s *Server) handleLoopMissionReceive(w http.ResponseWriter, r *http.Request
 				if !ok {
 					return deltacomm.Deltas{}, store.GemChange{}, errors.New("unknown mission reward")
 				}
+				before := gemDelta
 				if err := accumulateMissionRewards(s.master, grp, grantTimes, len(cur["user_profile"]) > 0, false, currencyDelta, itemDelta, profileDelta, &gemDelta); err != nil {
 					return deltacomm.Deltas{}, store.GemChange{}, err
+				}
+				if amount := gemDelta - before; amount > 0 {
+					if i, seen := creditPositions[m.MasterMissionID]; seen {
+						credits[i].Amount += amount
+					} else {
+						creditPositions[m.MasterMissionID] = len(credits)
+						credits = append(credits, gem.Credit{Amount: amount, Reason: gem.Reason{Type: gem.ReasonMission, MasterMissionID: m.MasterMissionID}})
+					}
 				}
 			}
 			d := deltacomm.Deltas{PutItems: map[string][]deltacomm.Row{}}
@@ -172,7 +183,7 @@ func (s *Server) handleLoopMissionReceive(w http.ResponseWriter, r *http.Request
 				d.PutItems["user_profile"] = []deltacomm.Row{profile}
 				nowPut["user_profile"] = d.PutItems["user_profile"]
 			}
-			return d, store.GemChange{Add: gemDelta}, nil
+			return d, store.GemChange{Add: gemDelta, Credits: credits}, nil
 		})
 	if err != nil {
 		s.log.Error("mission/loop/receive", "err", err)

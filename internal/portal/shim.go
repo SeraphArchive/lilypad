@@ -89,6 +89,7 @@ func (sh *Shim) Routes() http.Handler {
 	r.Post("/migration/code/verify", sh.migrationVerify)
 	r.Post("/migration", sh.migration)
 	r.Get("/payment/balance", sh.balance)
+	r.Get("/payment/history", sh.history)
 	r.Get("/payment/productlist", sh.productList)
 	r.Get("/payment/purchase/alert/setting", sh.alertSetting)
 	r.Get("/moderate/keywordlist", sh.keywordList)
@@ -101,6 +102,19 @@ func writeJSON(w http.ResponseWriter, v any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", "no-store")
 	_ = json.NewEncoder(w).Encode(v)
+}
+
+// clientInternalErrorCode and clientInternalErrorMessage are what
+// Response::makeInternalClientErrorResponseJson writes (code 0x4344). The native
+// parser reads result/code/message and ignores any other key, so a string "error"
+// field never reaches the client. Specific causes stay in the server log.
+const (
+	clientInternalErrorCode    = 17220
+	clientInternalErrorMessage = "Client Internal Error"
+)
+
+func writeNG(w http.ResponseWriter, code int, message string) {
+	writeJSON(w, map[string]any{"result": "NG", "code": code, "message": message})
 }
 
 func decodeJSON(r *http.Request, dst any) error {
@@ -204,17 +218,17 @@ func (sh *Shim) migrationVerify(w http.ResponseWriter, r *http.Request) {
 		MigrationPassword string `json:"migration_password"`
 	}
 	if err := decodeJSON(r, &req); err != nil {
-		writeJSON(w, map[string]any{"result": "NG", "error": "invalid migration request"})
+		writeNG(w, clientInternalErrorCode, clientInternalErrorMessage)
 		return
 	}
 	if sh.svc == nil {
-		writeJSON(w, map[string]any{"result": "NG", "error": "migration unavailable"})
+		writeNG(w, clientInternalErrorCode, clientInternalErrorMessage)
 		return
 	}
 	xuid, err := sh.svc.ResolveMigration(r.Context(), req.MigrationCode, req.MigrationPassword)
 	if err != nil {
 		sh.log.Warn("shim migration verify failed", "err", err)
-		writeJSON(w, map[string]any{"result": "NG", "error": "invalid migration code or password"})
+		writeNG(w, clientInternalErrorCode, clientInternalErrorMessage)
 		return
 	}
 	// Bind the old requestor when present, or the source UUID that a fresh
@@ -222,11 +236,11 @@ func (sh *Shim) migrationVerify(w http.ResponseWriter, r *http.Request) {
 	// a preexisting device identity is not a prerequisite for credential checks.
 	free, paid, err := sh.gemBalanceFor(r.Context(), xuid)
 	if err != nil {
-		writeJSON(w, map[string]any{"result": "NG", "error": "balance unavailable"})
+		writeNG(w, clientInternalErrorCode, clientInternalErrorMessage)
 		return
 	}
 	if err := sh.bindRequestor(r, xuid); err != nil {
-		writeJSON(w, map[string]any{"result": "NG", "error": "could not bind account"})
+		writeNG(w, clientInternalErrorCode, clientInternalErrorMessage)
 		return
 	}
 	entry := gemEntry(free, paid)
@@ -254,12 +268,12 @@ func (sh *Shim) migration(w http.ResponseWriter, r *http.Request) {
 func (sh *Shim) balance(w http.ResponseWriter, r *http.Request) {
 	xuid, err := sh.xuidFromRequest(r)
 	if err != nil {
-		writeJSON(w, map[string]any{"result": "NG", "error": "account lookup unavailable"})
+		writeNG(w, clientInternalErrorCode, clientInternalErrorMessage)
 		return
 	}
 	free, paid, err := sh.gemBalanceFor(r.Context(), xuid)
 	if err != nil {
-		writeJSON(w, map[string]any{"result": "NG", "error": "balance unavailable"})
+		writeNG(w, clientInternalErrorCode, clientInternalErrorMessage)
 		return
 	}
 	writeJSON(w, map[string]any{"result": "OK", "entry": gemEntry(free, paid)})
@@ -342,12 +356,12 @@ func (sh *Shim) authXuid(w http.ResponseWriter, r *http.Request) {
 	rid := requestorID(r)
 	xuid, err := sh.xuidFromRequest(r)
 	if err != nil {
-		writeJSON(w, map[string]any{"result": "NG", "error": "account lookup unavailable"})
+		writeNG(w, clientInternalErrorCode, clientInternalErrorMessage)
 		return
 	}
 	if xuid == "" {
 		sh.log.Warn("auth/x_uid: no XUID bound for requestor; complete 引き継ぎ first", "requestor", rid)
-		writeJSON(w, map[string]any{"result": "NG", "error": "no account bound; complete migration"})
+		writeNG(w, clientInternalErrorCode, clientInternalErrorMessage)
 		return
 	}
 	sh.log.Info("auth/x_uid: returning bound XUID", "requestor", rid, "x_uid", xuid)

@@ -86,7 +86,7 @@ func run() error {
 		}
 		defer pg.Close()
 		accounts, gameStore, portalStore, gemStore = pg, pg, pg, pg
-		balanceProvider = gemBalanceAdapter{accounts: pg, gems: pg}
+		balanceProvider = gemBalanceAdapter{accounts: pg, gems: pg, histories: pg}
 		log.Info("postgres store ready")
 	} else {
 		accounts = account.NewMemory(0)
@@ -323,8 +323,9 @@ func loadMaster(cfg *config.Config, log *slog.Logger) (*master.Data, error) {
 // gemBalanceAdapter lets the platform shim read a player's gem balance: it
 // resolves the platform XUID to the game account, then reads the gem store.
 type gemBalanceAdapter struct {
-	accounts account.Provider
-	gems     gem.Store
+	accounts  account.Provider
+	gems      gem.Store
+	histories gem.HistoryStore
 }
 
 func (a gemBalanceAdapter) GemBalance(ctx context.Context, xuid string) (free, paid int64, err error) {
@@ -337,4 +338,15 @@ func (a gemBalanceAdapter) GemBalance(ctx context.Context, xuid string) (free, p
 		return 0, 0, err
 	}
 	return b.Free, b.Paid, nil
+}
+
+func (a gemBalanceAdapter) GemHistory(ctx context.Context, xuid string, offset, limit int) ([]gem.Transaction, bool, error) {
+	if a.histories == nil {
+		return nil, false, errors.New("gem history storage unavailable")
+	}
+	acc, err := a.accounts.GetOrCreate(ctx, xuid)
+	if err != nil {
+		return nil, false, err
+	}
+	return a.histories.History(ctx, acc.UserID, offset, limit)
 }

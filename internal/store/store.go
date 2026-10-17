@@ -6,9 +6,11 @@ package store
 import (
 	"context"
 	"errors"
+	"math"
 
 	"lilypad/internal/account"
 	"lilypad/internal/deltacomm"
+	"lilypad/internal/gem"
 )
 
 // ErrConcurrency is returned by ApplyDeltas when a push baseline does not match
@@ -19,10 +21,38 @@ var ErrConcurrency = errors.New("save-lock concurrency conflict")
 type Row = deltacomm.Row
 
 // GemChange is applied inside MutateWithGems' transaction. Consume runs before
-// Add. A zero value is a no-op.
+// Add. Credits, when supplied, must describe all of Add. Missing provenance uses
+// ReasonNone. A zero value is a no-op.
 type GemChange struct {
-	Add     int64
-	Consume int64
+	Add           int64
+	Consume       int64
+	Credits       []gem.Credit
+	ConsumeReason gem.Reason
+}
+
+func (ch GemChange) Validate() error {
+	if ch.Add < 0 || ch.Consume < 0 {
+		return errors.New("negative gem credit or debit")
+	}
+	if ch.Consume > 0 {
+		if err := ch.ConsumeReason.Validate(); err != nil {
+			return err
+		}
+	}
+	var total int64
+	for _, credit := range ch.Credits {
+		if credit.Amount <= 0 || credit.Amount > math.MaxInt64-total {
+			return errors.New("invalid gem credit provenance amount")
+		}
+		if err := credit.Reason.Validate(); err != nil {
+			return err
+		}
+		total += credit.Amount
+	}
+	if len(ch.Credits) > 0 && total != ch.Add {
+		return errors.New("gem credit provenance does not match total")
+	}
+	return nil
 }
 
 // Store is the full persistence surface used by the game API.

@@ -94,9 +94,17 @@ SELECT id, transaction_id, table_name, operation, changed_at, old_data, new_data
 FROM player_data_history WHERE user_id = $1 ORDER BY id DESC;
 ```
 
-`@gems` entries contain wallet before/after values. `@rejected_push` entries contain refused deltas,
-their baselines, creation time and reason. Review these against the current save; do not automatically
-apply an obsolete packet.
+`@gems` entries contain wallet before/after values. They are recovery snapshots,
+not the player-visible `gem_transactions` journal served by `payment/history`.
+That journal commits with game settlement and retains per-claim reasons; retries,
+failed operations and zero changes add no entries. Existing recovery snapshots
+are not backfilled as invented purchases or grants. Import, explicit wallet Set
+and direct SQL edits remain recovery-only and do not erase local game history.
+See [quartz history](quartz-history.md) for the wire and provenance contract.
+
+`@rejected_push` entries contain refused deltas, their baselines, creation time and
+reason. Review these against the current save; do not automatically apply an
+obsolete packet.
 Entries sharing `transaction_id` belong to the same atomic operation. Version metadata and recovery
 copies reject direct SQL edits, so an editor cannot accidentally hide a save or erase its history.
 

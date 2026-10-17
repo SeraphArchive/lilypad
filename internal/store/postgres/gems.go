@@ -42,10 +42,10 @@ func (s *Store) Add(ctx context.Context, userID int64, free int64) (gem.Balance,
 		if err := lockPlayer(ctx, tx, userID); err != nil {
 			return err
 		}
-		return tx.QueryRow(ctx, `
-		INSERT INTO gems (user_id, free, paid) VALUES ($1, $2, 0)
-		ON CONFLICT (user_id) DO UPDATE SET free = gems.free + EXCLUDED.free
-		RETURNING free, paid`, userID, free).Scan(&b.Free, &b.Paid)
+		if err := applyGemChangeTx(ctx, tx, userID, store.GemChange{Add: free}); err != nil {
+			return err
+		}
+		return tx.QueryRow(ctx, `SELECT free, paid FROM gems WHERE user_id=$1`, userID).Scan(&b.Free, &b.Paid)
 	})
 	if err != nil {
 		return gem.Balance{}, fmt.Errorf("postgres: gem add: %w", err)
@@ -94,7 +94,7 @@ func (s *Store) Consume(ctx context.Context, userID int64, n int64) (gem.Balance
 		if err := lockPlayer(ctx, tx, userID); err != nil {
 			return err
 		}
-		nb, err := consumeGemsTx(ctx, tx, userID, n)
+		nb, err := consumeGemsTx(ctx, tx, userID, n, gem.Reason{})
 		if err != nil {
 			return err
 		}
@@ -113,11 +113,11 @@ func (s *Store) Consume(ctx context.Context, userID int64, n int64) (gem.Balance
 // applyGemChangeTx applies a gem add/consume on tx. Consume uses a row lock
 // and returns gem.ErrInsufficient without writing when the balance is too low.
 func applyGemChangeTx(ctx context.Context, tx pgx.Tx, userID int64, ch store.GemChange) error {
-	if ch.Add < 0 || ch.Consume < 0 {
-		return fmt.Errorf("negative gem credit or debit")
+	if err := ch.Validate(); err != nil {
+		return err
 	}
 	if ch.Consume > 0 {
-		if _, err := consumeGemsTx(ctx, tx, userID, ch.Consume); err != nil {
+		if _, err := consumeGemsTx(ctx, tx, userID, ch.Consume, ch.ConsumeReason); err != nil {
 			return err
 		}
 	}
@@ -130,10 +130,18 @@ func applyGemChangeTx(ctx context.Context, tx pgx.Tx, userID int64, ch store.Gem
 		userID, ch.Add); err != nil {
 		return fmt.Errorf("postgres: gem add: %w", err)
 	}
-	return nil
+	credits := ch.Credits
+	if len(credits) == 0 {
+		credits = []gem.Credit{{Amount: ch.Add}}
+	}
+	entries := make([]gem.Transaction, 0, len(credits))
+	for _, credit := range credits {
+		entries = append(entries, gem.Transaction{Type: gem.TransactionIssue, Free: credit.Amount, Reason: credit.Reason})
+	}
+	return recordGemTransactionsTx(ctx, tx, userID, entries)
 }
 
-func consumeGemsTx(ctx context.Context, tx pgx.Tx, userID, n int64) (gem.Balance, error) {
+func consumeGemsTx(ctx context.Context, tx pgx.Tx, userID, n int64, reason gem.Reason) (gem.Balance, error) {
 	var b gem.Balance
 	err := tx.QueryRow(ctx,
 		`SELECT free, paid FROM gems WHERE user_id=$1 FOR UPDATE`, userID).Scan(&b.Free, &b.Paid)
@@ -149,6 +157,11 @@ func consumeGemsTx(ctx context.Context, tx pgx.Tx, userID, n int64) (gem.Balance
 	}
 	if _, err := tx.Exec(ctx,
 		`UPDATE gems SET free=$2, paid=$3 WHERE user_id=$1`, userID, nb.Free, nb.Paid); err != nil {
+		return gem.Balance{}, err
+	}
+	if err := recordGemTransactionsTx(ctx, tx, userID, []gem.Transaction{{
+		Type: gem.TransactionConsume, Free: nb.Free - b.Free, Paid: nb.Paid - b.Paid, Reason: reason,
+	}}); err != nil {
 		return gem.Balance{}, err
 	}
 	return nb, nil

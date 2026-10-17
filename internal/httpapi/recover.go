@@ -71,6 +71,9 @@ func (s *Server) handleResourceRecover(w http.ResponseWriter, r *http.Request, t
 			var gch store.GemChange
 			if req.ConsumedHC > 0 {
 				gch.Consume = req.ConsumedHC
+				if table == "user_life" {
+					gch.ConsumeReason = gem.Reason{Type: gem.ReasonLifeRecovery, RecoveryNum: req.RecoveryNum}
+				}
 			}
 			if req.MasterRecoverItemLabel != "" && req.ConsumeItemCount > 0 && s.master != nil {
 				itemID, ok := s.master.ItemID(req.MasterRecoverItemLabel)

@@ -91,10 +91,13 @@ entries still fall back to the declared cost; a zero declared cost remains zero.
 Setting the flag false always trusts the declared cost. This compatibility policy
 is not complete payment validation and should not be described as anti-cheat.
 Draw payment, generated rewards and exact
-retry responses commit together. A failure rolls back all mutations; there is no
-best-effort compensating refund contract. Missions, gifts and daily rewards use
-master-defined grants. Repeated mission claims and paid operation retries must
-not pay or consume twice.
+retry responses commit together. The same transaction appends player-visible
+quartz transactions with per-claim provenance and actual free/paid debit splits.
+A failure rolls back all mutations; there is no best-effort compensating refund
+contract. Missions, gifts and daily rewards use master-defined grants. Repeated
+mission claims and paid operation retries must not pay or consume twice. The
+platform shim reads this journal through `payment/history`; reason descriptions
+are localized by the client. See [quartz history](quartz-history.md).
 
 Missing master data does not settle rewards. An explicitly configured unreadable
 or empty master directory fails startup; an empty `data_dir` intentionally disables

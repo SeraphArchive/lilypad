@@ -223,6 +223,7 @@ func (s *Server) handleLotteryDraw(w http.ResponseWriter, r *http.Request) {
 			gch := store.GemChange{}
 			if cost > 0 {
 				gch.Consume = cost
+				gch.ConsumeReason = gem.Reason{Type: gem.ReasonLottery, MasterLotteryID: req.MasterLotteryID}
 			}
 			return d, gch, nil
 		})
@@ -277,6 +278,7 @@ func (s *Server) handleMissionReceive(w http.ResponseWriter, r *http.Request) {
 			currencyDelta := map[int64]int64{}
 			itemDelta := map[int64]int64{}
 			profileDelta := map[string]int64{}
+			var credits []gem.Credit
 			seen := map[int64]bool{}
 			for _, id := range req.MasterMissionIDs {
 				if seen[id] {
@@ -309,8 +311,12 @@ func (s *Server) handleMissionReceive(w http.ResponseWriter, r *http.Request) {
 				missionRows = append(missionRows, row)
 				if s.master != nil {
 					if grp, ok := s.master.MissionRewardGroup(id); ok {
+						before := gemDelta
 						if err := accumulateMissionRewards(s.master, grp, 1, len(cur["user_profile"]) > 0, true, currencyDelta, itemDelta, profileDelta, &gemDelta); err != nil {
 							return deltacomm.Deltas{}, store.GemChange{}, err
+						}
+						if amount := gemDelta - before; amount > 0 {
+							credits = append(credits, gem.Credit{Amount: amount, Reason: gem.Reason{Type: gem.ReasonMission, MasterMissionID: id}})
 						}
 					}
 				}
@@ -340,7 +346,7 @@ func (s *Server) handleMissionReceive(w http.ResponseWriter, r *http.Request) {
 				}
 				d.PutItems["user_profile"] = []deltacomm.Row{profileRow}
 			}
-			return d, store.GemChange{Add: gemDelta}, nil
+			return d, store.GemChange{Add: gemDelta, Credits: credits}, nil
 		})
 	if err != nil {
 		s.log.Error("mission/receive", "err", err)
@@ -398,6 +404,7 @@ func (s *Server) handleGiftReceive(w http.ResponseWriter, r *http.Request) {
 			serverGifts := indexByInt(cur["user_server_gift"], "_giftId")
 			clientGifts := indexByInt(cur["user_client_gift"], "_giftId")
 
+			var credits []gem.Credit
 			var recvServer, recvClient []deltacomm.Row
 			itemDelta := map[int64]int64{}
 			// Only server gifts are granted server-authoritatively. Their rows are
@@ -430,6 +437,7 @@ func (s *Server) handleGiftReceive(w http.ResponseWriter, r *http.Request) {
 						return errors.New("invalid gift quartz amount")
 					}
 					gemDelta += num
+					credits = append(credits, gem.Credit{Amount: num, Reason: gem.Reason{Type: gem.ReasonServerGift, MasterReasonID: asInt(g["_masterReasonId"])}})
 				default:
 					return errors.New("unsupported server gift reward category")
 				}
@@ -452,6 +460,7 @@ func (s *Server) handleGiftReceive(w http.ResponseWriter, r *http.Request) {
 				switch cat {
 				case master.RewardCategoryHardCurrency:
 					gemDelta += num
+					credits = append(credits, gem.Credit{Amount: num, Reason: gem.Reason{Type: gem.ReasonClientGift, MasterReasonID: asInt(g["_masterReasonId"])}})
 				case rewardCategoryTermStock:
 					itemID, days, tok := s.master.TermStockItemByLabel(label)
 					if !tok {
@@ -526,7 +535,7 @@ func (s *Server) handleGiftReceive(w http.ResponseWriter, r *http.Request) {
 				d.PutItems["user_term_stock_item"] = termRows
 				put["user_term_stock_item"] = termRows
 			}
-			return d, store.GemChange{Add: gemDelta}, nil
+			return d, store.GemChange{Add: gemDelta, Credits: credits}, nil
 		})
 	if err != nil {
 		s.log.Error("gift/receive", "err", err)

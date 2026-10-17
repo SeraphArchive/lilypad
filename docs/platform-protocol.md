@@ -44,8 +44,10 @@ persist either form of binding rejects verification.
 
 ## Payload contracts
 
-Platform success uses a root string `result: "OK"`; errors use a non-success
-result. `entry` holds nested payloads where required by the route. `auth/now`
+Platform success uses a root string `result: "OK"`; errors use `result: "NG"`
+with an integer `code` and a string `message`. Shim failures use code `17220`
+and message `Client Internal Error`, the native internal-client error. `entry`
+holds nested payloads where required by the route. `auth/now`
 must return `t` as a JSON number, not a string:
 
 ```json
@@ -99,6 +101,16 @@ These compatibility fields do not imply official device/payment settlement.
 `migration/code/verify` reports the same balance for the resolved account.
 The adapter reads PostgreSQL; new accounts begin at zero. Read errors must be
 checked against current handler behavior rather than treated as free currency.
+
+`GET payment/history?offset=0&limit=20` returns that account's committed quartz
+transactions newest-first. `entry` contains `transactions: []`, decimal-string
+`offset` and `limit`, and boolean `has_next`. Each row has a JST date, signed
+decimal-string free/paid changes, and a JSON-encoded **string** reason interpreted
+using the client's master data. Defaults are offset 0 and limit 20; limit is
+bounded to 1..100. Invalid pagination, unresolved identities and configured
+storage failures return `result: "NG"`, not an empty successful history. Without
+wallet storage, development mode returns an empty page for a resolved identity.
+See [quartz history](quartz-history.md) for reason semantics and settlement rules.
 
 `payment/productlist` exposes a compatibility price catalogue filtered using
 configured master product releases. Price entries are not purchase settlement.

@@ -49,7 +49,7 @@ func requireShimFailure(t *testing.T, rec *httptest.ResponseRecorder) {
 	if err := json.Unmarshal(rec.Body.Bytes(), &out); err != nil {
 		t.Fatal(err)
 	}
-	if out["result"] != "NG" || out["entry"] != nil || out["src_x_uid"] != nil {
+	if out["result"] != "NG" || out["code"] != float64(clientInternalErrorCode) || out["message"] != clientInternalErrorMessage || out["error"] != nil || out["entry"] != nil || out["src_x_uid"] != nil {
 		t.Fatalf("failed operation returned success data: %v", out)
 	}
 	if rec.Header().Get("Cache-Control") != "no-store" {

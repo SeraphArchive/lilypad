@@ -33,7 +33,7 @@ func freshStore(t *testing.T, seed map[string][]Row) *Store {
 	}
 	// Isolate: clear state tables (dedicated test database).
 	if err := s.withTx(ctx, func(tx pgx.Tx) error {
-		_, err := tx.Exec(ctx, `DELETE FROM user_state; DELETE FROM gems; DELETE FROM user_state_tokens; DELETE FROM player_data_history; DELETE FROM accounts; DELETE FROM platform_requestor_bindings; DELETE FROM request_results`)
+		_, err := tx.Exec(ctx, `DELETE FROM user_state; DELETE FROM gems; DELETE FROM gem_transactions; DELETE FROM user_state_tokens; DELETE FROM player_data_history; DELETE FROM accounts; DELETE FROM platform_requestor_bindings; DELETE FROM request_results`)
 		return err
 	}); err != nil {
 		t.Fatalf("truncate: %v", err)

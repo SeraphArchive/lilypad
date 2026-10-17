@@ -15,7 +15,7 @@ func (sh *Shim) authorize(w http.ResponseWriter, r *http.Request) {
 		IDToken  string `json:"id_token"`
 	}
 	if err := decodeJSON(r, &req); err != nil || strings.TrimSpace(req.IDToken) == "" {
-		writeJSON(w, map[string]any{"result": "NG", "error": "invalid authorization request"})
+		writeNG(w, clientInternalErrorCode, clientInternalErrorMessage)
 		return
 	}
 
@@ -26,7 +26,7 @@ func (sh *Shim) authorize(w http.ResponseWriter, r *http.Request) {
 	uuid := requestorID(r)
 	if strings.TrimSpace(uuid) == "" {
 		if strings.TrimSpace(req.DeviceID) == "" || strings.TrimSpace(req.Token) == "" {
-			writeJSON(w, map[string]any{"result": "NG", "error": "invalid authorization request"})
+			writeNG(w, clientInternalErrorCode, clientInternalErrorMessage)
 			return
 		}
 		// Frame the fields to avoid concatenation collisions. A refreshed Steam
